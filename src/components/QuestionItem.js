@@ -1,6 +1,10 @@
-import React from "react";
 
-function QuestionItem({ question }) {
+function QuestionItem({question, onDeleteQuestion }) {
+  if (!question) {
+    // If the question prop is null or undefined, return null or render an appropriate placeholder
+    return null;
+  }
+  console.log("item", question)
   const { id, prompt, answers, correctIndex } = question;
 
   const options = answers.map((answer, index) => (
@@ -8,6 +12,14 @@ function QuestionItem({ question }) {
       {answer}
     </option>
   ));
+
+  function handleDeleteClick() {
+    fetch(`http://localhost:4000/questions/${id}`, {
+      method: "DELETE",
+    })
+      .then((r) => r.json())
+      .then(() => onDeleteQuestion(id));
+  }
 
   return (
     <li>
@@ -17,7 +29,7 @@ function QuestionItem({ question }) {
         Correct Answer:
         <select defaultValue={correctIndex}>{options}</select>
       </label>
-      <button>Delete Question</button>
+      <button onClick={handleDeleteClick}>Delete Question</button>
     </li>
   );
 }
